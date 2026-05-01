@@ -1,0 +1,82 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "bindings": {
+      "ctrl-b": "workspace::ToggleLeftDock",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      "j k": "vim::NormalBefore",
+      "ctrl-h": "editor::ShowSignatureHelp",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      // General
+      "space y": "editor::Copy",
+      "space p": "editor::Paste",
+      "escape": "editor::Cancel", // Clears search highlight & multiple cursors
+      "space o": "projects::OpenRecent",
+
+      // LSP & Navigation
+      "space g d": "editor::GoToDefinition",
+      "space g r": "editor::FindAllReferences",
+      "space r n": "editor::Rename",
+      "space c a": "editor::ToggleCodeActions",
+      "space f": "editor::Format",
+      "space d": "diagnostics::Deploy",
+      "] d": "editor::GoToDiagnostic",
+      "[ d": "editor::GoToPreviousDiagnostic",
+
+      // Git & Folding
+      "] g": "editor::GoToHunk",
+      "[ g": "editor::GoToPreviousHunk",
+      "space b": "editor::FoldFunctionBodies",
+      "space t": "editor::ToggleSelectedDiffHunks",
+
+      // Comments
+      "g c c": "editor::ToggleComments",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == visual",
+    "bindings": {
+      "space y": "editor::Copy",
+      "space p": "editor::Paste",
+      "g c": "editor::ToggleComments",
+
+      // Move lines up/down (Native Zed behavior)
+      "shift-j": "editor::MoveLineDown",
+      "shift-k": "editor::MoveLineUp",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == visual && !vim_waiting",
+    "bindings": {
+      // Paste over without copying replaced text
+      "space p": ["editor::Paste", { "preserve_clipboard": true }],
+    },
+  },
+  {
+    "context": "ProjectPanel && !editing",
+    "bindings": {
+      "a": "project_panel::NewFile",
+      "d": "project_panel::Delete",
+      "r": "project_panel::Rename",
+      "x": "project_panel::Cut",
+      "c": "project_panel::Copy",
+      "v": "project_panel::Paste",
+      // Uncollapse all: Zed calls this "Expand All Nodes"
+      "z": "project_panel::CollapseAllEntries",
+    },
+  },
+]

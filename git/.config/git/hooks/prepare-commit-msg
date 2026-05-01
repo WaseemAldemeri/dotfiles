@@ -1,0 +1,27 @@
+#!/bin/bash
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+if [ -z "$COMMIT_SOURCE" ]; then
+  echo "🤖 Asking Claude to analyze diffs and suggest a commit message..."
+
+  # Call Claude using the CLI
+  SUGGESTION=$(claude -p "Run the suggest-commit skill. Output strictly the commit message and nothing else.")
+
+  if [ -n "$SUGGESTION" ]; then
+    TEMP_FILE=$(mktemp)
+    
+    echo "$SUGGESTION" > "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    echo "# ---------------------------------------------------" >> "$TEMP_FILE"
+    echo "# 🤖 Claude's suggestion is above. Edit or save to commit." >> "$TEMP_FILE"
+    
+    cat "$COMMIT_MSG_FILE" >> "$TEMP_FILE"
+    
+    mv "$TEMP_FILE" "$COMMIT_MSG_FILE"
+  else
+    echo "⚠️ Claude failed to generate a message. Falling back to default."
+  fi
+fi
+

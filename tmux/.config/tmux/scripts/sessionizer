@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# sessionizer: fuzzy-find and launch/switch tmux sessions
+#
+# Keybindings inside the picker:
+#   Enter   → switch to / launch selected session; or create new if query has no match
+#   ctrl-d  → kill the selected session
+#   ctrl-r  → rename the selected session
+
+PROJECTS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/projects"
+
+# ── Build the list ────────────────────────────────────────────────────────────
+# 1. Preconfigured projects (from $PROJECTS_DIR/*.sh), shown first
+projects=()
+for f in "$PROJECTS_DIR"/*.sh; do
+  [ -f "$f" ] || continue
+  projects+=("$(basename "$f" .sh)")
+done
+
+# 2. Active sessions not already covered by a project file
+active_sessions=()
+while IFS= read -r sess; do
+  [[ " ${projects[*]} " == *" $sess "* ]] || active_sessions+=("$sess")
+done < <(tmux list-sessions -F "#S" 2>/dev/null)
+
+list=("${projects[@]}" "${active_sessions[@]}")
+
+# ── Fuzzy pick ────────────────────────────────────────────────────────────────
+result=$(printf '%s\n' "${list[@]}" | fzf \
+  --print-query \
+  --expect=ctrl-d,ctrl-r \
+  --prompt="  session: " \
+  --header="  enter: open  ctrl-d: kill  ctrl-r: rename" \
+  --height=100% \
+  --reverse \
+  --border=rounded \
+  --no-info \
+  --margin=1)
+
+# fzf output with --print-query + --expect:
+#   line 1 → query typed by the user
+#   line 2 → key that triggered exit (empty = Enter)
+#   line 3 → selected item (may be empty if no match or ctrl-d/ctrl-r with no selection)
+query=$(printf '%s' "$result" | sed -n '1p')
+key=$(printf '%s' "$result" | sed -n '2p')
+selection=$(printf '%s' "$result" | sed -n '3p')
+
+# Nothing chosen at all
+[ -z "$key" ] && [ -z "$selection" ] && [ -z "$query" ] && exit 0
+
+# ── Handle key ────────────────────────────────────────────────────────────────
+case "$key" in
+
+  ctrl-d)
+    target="${selection:-$query}"
+    [ -z "$target" ] && exit 0
+    tmux kill-session -t "$target" 2>/dev/null
+    exit 0
+    ;;
+
+  ctrl-r)
+    target="${selection:-$query}"
+    [ -z "$target" ] && exit 0
+    # Open tmux's own rename prompt so the user gets the familiar status-bar input
+    tmux command-prompt -I "$target" -p "Rename '${target}' to:" \
+      "rename-session -t '${target}' '%%'"
+    exit 0
+    ;;
+
+  "") # Enter
+    if [ -n "$selection" ]; then
+      SESSION="$selection"
+
+      # If it's a preconfigured project and the session doesn't exist yet, launch it
+      if [[ " ${projects[*]} " == *" $SESSION "* ]] && \
+         ! tmux has-session -t "$SESSION" 2>/dev/null; then
+        # shellcheck source=/dev/null
+        source "$PROJECTS_DIR/$SESSION.sh"
+        launch
+      fi
+
+    elif [ -n "$query" ]; then
+      # User typed something not in the list → create a new bare session
+      SESSION="$query"
+      if ! tmux has-session -t "$SESSION" 2>/dev/null; then
+        tmux new-session -d -s "$SESSION"
+      fi
+
+    else
+      exit 0
+    fi
+    ;;
+esac
+
+# ── Attach or switch ──────────────────────────────────────────────────────────
+if [ -n "$TMUX" ]; then
+  tmux switch-client -t "$SESSION"
+else
+  tmux attach-session -t "$SESSION"
+fi

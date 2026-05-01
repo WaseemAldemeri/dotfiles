@@ -1,0 +1,10 @@
+[core]
+	editor = nvim
+	hooksPath = ~/.config/git/hooks
+[user]
+	name = Waseem Al-Dmeiri
+	email = waseemaldemeri@gmail.com
+[init]
+	defaultBranch = main
+[use]
+	email = waseemaldemeri@gmail.com

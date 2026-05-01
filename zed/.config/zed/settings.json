@@ -1,0 +1,101 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "cli_default_open_behavior": "existing_window",
+  "git_panel": {
+    "dock": "left",
+    "tree_view": false,
+    "button": false,
+  },
+  "vim": {
+    "use_system_clipboard": "on_yank",
+  },
+  "preview_tabs": {
+    "enable_preview_from_project_panel": true,
+    "enabled": true,
+  },
+  "title_bar": {
+    "show_menus": false,
+    "show_user_picture": true,
+    "show_user_menu": true,
+    "show_onboarding_banner": true,
+    "show_project_items": true,
+    "show_branch_icon": false,
+  },
+  "debugger": {
+    "button": false,
+  },
+  "search": {
+    "button": false,
+  },
+  "diagnostics": {
+    "button": false,
+  },
+  "status_bar": {
+    "cursor_position_button": false,
+    "active_language_button": true,
+  },
+  "collaboration_panel": {
+    "dock": "left",
+    "button": false,
+  },
+  "outline_panel": {
+    "dock": "left",
+    "button": false,
+  },
+  "agent": {
+    "dock": "right",
+    "button": false,
+    "enabled": false,
+  },
+  "project_panel": {
+    "dock": "left",
+    "hide_root": true,
+    "git_status_indicator": true,
+    "entry_spacing": "comfortable",
+    "button": false,
+  },
+  "tab_bar": {
+    "show_nav_history_buttons": false,
+    "show_tab_bar_buttons": false,
+    "show": false,
+  },
+  "toolbar": {
+    "breadcrumbs": true,
+    "quick_actions": false,
+  },
+  "session": {
+    "trust_all_worktrees": true,
+  },
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Material Icon Theme",
+    "dark": "Material Icon Theme",
+  },
+  "vim_mode": true,
+  "ui_font_size": 18,
+  "buffer_font_size": 22,
+  "buffer_font_family": "CaskaydiaMono Nerd Font Mono",
+  "relative_line_numbers": "enabled",
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "VSCode Dark Modern",
+  },
+  "terminal": {
+    "button": false,
+    "font_family": "CaskaydiaMono Nerd Font Mono",
+    "font_size": 18,
+    "copy_on_select": true,
+  },
+  "tabs": {
+    "file_icons": false,
+    "git_status": true,
+  },
+}

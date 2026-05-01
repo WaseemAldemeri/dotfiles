@@ -1,0 +1,53 @@
+add_newline = true
+
+# Order of modules (Clean and fast)
+format = """
+$git_branch\
+$git_status\
+$line_break\
+$directory\
+$character"""
+
+[directory]
+style = "bold purple"
+# This shows the full name of every folder
+fish_style_pwd_dir_length = 0
+# Only start truncating if the path is more than 5 folders deep
+truncation_length = 5
+# When it does truncate, show the beginning as "…/"
+truncation_symbol = "…/"
+# Keep the current folder and its parent fully visible
+truncate_to_repo = false
+
+[git_branch]
+symbol = " "
+style = "bold yellow"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold red"
+# Using single quotes here fixes the TOML parse error
+format = '([\[$all_status$ahead_behind\]]($style) )'
+
+#[character]
+#success_symbol = "[λ](bold green) "
+#error_symbol = "[λ](bold red) "
+
+# This stops the "via 🦕 via  via 🐍" noise
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[rust]
+disabled = true
+
+[python]
+disabled = true
+
+[lua]
+disabled = true
+
+[deno]
+disabled = true
