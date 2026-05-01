@@ -1,0 +1,10 @@
+app.zen_browser.zen	flathub
+com.bitwarden.desktop	flathub
+com.discordapp.Discord	flathub
+com.google.AndroidStudio	flathub
+com.moonlight_stream.Moonlight	flathub
+com.obsproject.Studio	flathub
+com.slack.Slack	flathub
+com.vintagetechie.CosmicExtAppletTempest	cosmic
+dev.edfloreshz.Calculator	flathub
+org.videolan.VLC	flathub

@@ -1,0 +1,10 @@
+[
+    Home,
+    Documents,
+    Downloads,
+    Music,
+    Pictures,
+    Videos,
+    Path("/home/waseem/Work"),
+    Path("/home/waseem/Work/Test/notes/books"),
+]
