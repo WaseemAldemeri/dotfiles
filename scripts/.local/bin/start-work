@@ -1,0 +1,19 @@
+#!/bin/sh
+# Open dev session on the desktop machine over LAN.
+#   start-work                # ssh into $HOST at home dir
+#   start-work <remote-path>  # ssh into a specific project path
+# Env:
+#   HOST  = ssh alias of dev machine (default: desktop, configured in ~/.ssh/config)
+set -e
+
+HOST="${HOST:-desktop}"
+PROJECT="${1:-/home/waseem}"
+
+# 1. Background port-forward tunnels (defined as LocalForward in ~/.ssh/config)
+autossh -M 0 -fN "$HOST"
+
+# 2. Editor — Zed remote
+zed "ssh://$HOST$PROJECT" &
+
+# 3. Foreground terminal — mosh + persistent tmux session named "main"
+exec alacritty -e mosh "$HOST" -- tmux new -A -s main

@@ -15,6 +15,7 @@ PACKAGES=(
   btop
   neofetch
   starship
+  scripts
 )
 
 for pkg in "${PACKAGES[@]}"; do

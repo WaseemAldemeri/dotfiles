@@ -3,27 +3,14 @@
         modifiers: [
             Super,
         ],
-        key: "f",
-    ): Fullscreen,
-    (
-        modifiers: [
-            Super,
-        ],
         key: "t",
     ): Disable,
     (
         modifiers: [
             Super,
         ],
-        key: "p",
-        description: Some("sessionizer"),
-    ): Spawn("alacritty -e \"sh -c '$HOME/.config/tmux/scripts/sessionizer'\""),
-    (
-        modifiers: [
-            Alt,
-        ],
-        key: "F4",
-    ): Disable,
+        key: "f",
+    ): Fullscreen,
     (
         modifiers: [
             Super,
@@ -34,14 +21,20 @@
         modifiers: [
             Super,
         ],
-        key: "w",
-    ): Close,
+        key: "p",
+    ): Spawn("alacritty -e /home/waseem/.config/tmux/scripts/sessionizer"),
     (
         modifiers: [
             Super,
         ],
         key: "Return",
     ): System(Terminal),
+    (
+        modifiers: [
+            Super,
+        ],
+        key: "w",
+    ): Close,
     (
         modifiers: [
             Super,
@@ -54,5 +47,11 @@
             Super,
         ],
         key: "q",
+    ): Disable,
+    (
+        modifiers: [
+            Alt,
+        ],
+        key: "F4",
     ): Disable,
 }
