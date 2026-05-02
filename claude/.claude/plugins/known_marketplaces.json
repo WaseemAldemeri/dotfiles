@@ -1,0 +1,26 @@
+{
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/home/waseem/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-05-02T15:54:50.951Z"
+  },
+  "jarrodwatts-claude-stt": {
+    "source": {
+      "source": "github",
+      "repo": "jarrodwatts/claude-stt"
+    },
+    "installLocation": "/home/waseem/.claude/plugins/marketplaces/jarrodwatts-claude-stt",
+    "lastUpdated": "2026-02-11T09:54:52.038Z"
+  },
+  "ast-grep-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "ast-grep/agent-skill"
+    },
+    "installLocation": "/home/waseem/.claude/plugins/marketplaces/ast-grep-marketplace",
+    "lastUpdated": "2026-04-22T10:16:12.232Z"
+  }
+}

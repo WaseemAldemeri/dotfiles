@@ -16,6 +16,7 @@ PACKAGES=(
   neofetch
   starship
   scripts
+  claude
 )
 
 for pkg in "${PACKAGES[@]}"; do

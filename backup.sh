@@ -28,4 +28,29 @@ dconf dump / > dconf/dconf.dump
 echo "→ cosmic: desktop environment config"
 rsync -a --delete "$HOME/.config/cosmic/" cosmic-config/
 
+echo "→ runtimes: fnm Node versions"
+if command -v fnm >/dev/null 2>&1; then
+  fnm list 2>/dev/null | awk '{print $2}' | grep '^v' | sort -u > packages/fnm-versions.txt
+else
+  : > packages/fnm-versions.txt
+fi
+
+echo "→ runtimes: fvm Flutter versions"
+if command -v fvm >/dev/null 2>&1; then
+  fvm api list 2>/dev/null \
+    | python3 -c 'import json,sys; print("\n".join(v["name"] for v in json.load(sys.stdin).get("versions",[])))' \
+    > packages/fvm-versions.txt
+else
+  : > packages/fvm-versions.txt
+fi
+
+echo "→ runtimes: npm globals"
+if command -v npm >/dev/null 2>&1; then
+  npm ls -g --depth=0 --json 2>/dev/null \
+    | python3 -c 'import json,sys; deps=json.load(sys.stdin).get("dependencies",{}); print("\n".join(k for k in sorted(deps) if k not in ("npm","corepack")))' \
+    > packages/npm-globals.txt
+else
+  : > packages/npm-globals.txt
+fi
+
 echo "done. review with: git status && git diff"

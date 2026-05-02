@@ -1,0 +1,3 @@
+@ast-grep/cli
+adr-tools
+antigravity-claude-proxy

@@ -1,0 +1,68 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "WebSearch",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(pwd *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(tree *)",
+      "Bash(stat *)",
+      "Bash(file *)",
+      "Bash(du *)",
+      "Bash(df *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(date *)",
+      "Bash(which *)",
+      "Bash(echo *)"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "claude-stt@jarrodwatts-claude-stt": true,
+    "frontend-design@claude-plugins-official": true,
+    "linear@claude-plugins-official": true,
+    "figma@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "notion@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "ast-grep@ast-grep-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "ast-grep-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "ast-grep/agent-skill"
+      }
+    }
+  },
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "vim",
+  "voiceEnabled": true,
+  "skipAutoPermissionPrompt": true
+}
