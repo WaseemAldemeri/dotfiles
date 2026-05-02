@@ -98,15 +98,15 @@ fi
 # ─── 9. Runtimes: fnm/Node/npm + fvm/Flutter + Deno + Claude Code ─────────────
 log "9/14  Runtimes (fnm, fvm, deno, claude)"
 
-# Make sure $HOME/.local/bin is on PATH for tools we install below
+# Make sure tool install dirs are on PATH BEFORE any guards check them
+# (otherwise re-runs reinstall everything because `command -v` doesn't see the binaries)
 mkdir -p "$HOME/.local/bin"
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/fnm:$HOME/.deno/bin:$HOME/.local/bin:$PATH"
 
 # fnm — Node version manager
 if ! command -v fnm >/dev/null; then
   curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell || warn "fnm install failed"
 fi
-export PATH="$HOME/.local/share/fnm:$PATH"
 eval "$(fnm env --shell=bash)" || warn "fnm env failed"
 
 # Node versions from packages/fnm-versions.txt
