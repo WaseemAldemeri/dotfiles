@@ -66,17 +66,18 @@ xargs -a packages/apt-manual.txt sudo apt install -y || warn "Some apt packages 
 # ─── 5. Flatpak ───────────────────────────────────────────────────────────────
 log "5/14  Flatpak setup + apps"
 if ! command -v flatpak >/dev/null; then sudo apt install -y flatpak; fi
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
+flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo || true
 # packages/flatpak.txt is "appid<TAB>origin" per line
+# Use --user consistently to avoid "exists in multiple installations" if Pop ships system-level flathub
 while IFS=$'\t' read -r appid origin; do
   [[ -z "$appid" || "$appid" == "(flatpak"* ]] && continue
-  flatpak install -y --noninteractive "${origin:-flathub}" "$appid" || warn "flatpak install failed: $appid"
+  flatpak install -y --user --noninteractive "${origin:-flathub}" "$appid" || warn "flatpak install failed: $appid"
 done < packages/flatpak.txt
 
 # ─── 6. Oh-My-Zsh + plugins ───────────────────────────────────────────────────
 log "6/14  Oh-My-Zsh + plugins"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || warn "Oh-My-Zsh install failed"
 fi
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 [[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]     || git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions     "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
@@ -91,7 +92,7 @@ mkdir -p "$(dirname "$TPM_DIR")"
 # ─── 8. Starship ──────────────────────────────────────────────────────────────
 log "8/14  Starship prompt"
 if ! command -v starship >/dev/null; then
-  curl -fsSL https://starship.rs/install.sh | sh -s -- --yes
+  curl -fsSL https://starship.rs/install.sh | sh -s -- --yes || warn "starship install failed"
 fi
 
 # ─── 9. Runtimes: fnm/Node/npm + fvm/Flutter + Deno + Claude Code ─────────────
@@ -103,7 +104,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # fnm — Node version manager
 if ! command -v fnm >/dev/null; then
-  curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+  curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell || warn "fnm install failed"
 fi
 export PATH="$HOME/.local/share/fnm:$PATH"
 eval "$(fnm env --shell=bash)" || warn "fnm env failed"
