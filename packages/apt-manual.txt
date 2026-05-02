@@ -2,9 +2,9 @@ adb
 adduser
 alacritty
 amd-ppt-bin
-antigravity
 apt
 apt-utils
+autossh
 base-files
 base-passwd
 bash
@@ -290,6 +290,7 @@ lsb-release
 mawk
 media-types
 mesa-utils
+mosh
 mount
 mythes-ar
 mythes-de
