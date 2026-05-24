@@ -89,6 +89,16 @@
         "lastUpdated": "2026-04-22T10:16:22.754Z",
         "gitCommitSha": "577f4d4507678f2c8cee150fae25e6ce309f70b1"
       }
+    ],
+    "supabase@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/home/waseem/.claude/plugins/cache/claude-plugins-official/supabase/0.1.6",
+        "version": "0.1.6",
+        "installedAt": "2026-05-05T09:23:31.573Z",
+        "lastUpdated": "2026-05-05T09:23:31.573Z",
+        "gitCommitSha": "693a17a9970ba96e01afb9bef060d1dca48463ba"
+      }
     ]
   }
 }

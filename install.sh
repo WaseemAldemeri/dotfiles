@@ -14,9 +14,10 @@
 #   9. Runtimes: fnm + Node + npm globals, fvm + Flutter, Deno, Claude Code
 #  10. Pre-stow cleanup: backup + remove conflicting target files
 #  11. Run ./stow.sh to symlink configs into $HOME
-#  12. Restore ~/.config/cosmic/ from cosmic-config/ (no --delete; merges)
-#  13. Load dconf snapshot
-#  14. chsh to zsh
+#  12. Enable systemd user timers (git-fetch, …)
+#  13. Restore ~/.config/cosmic/ from cosmic-config/ (no --delete; merges)
+#  14. Load dconf snapshot
+#  15. chsh to zsh
 set -euo pipefail
 
 DOTFILES="$(dirname "$(readlink -f "$0")")"
@@ -26,12 +27,12 @@ log() { printf '\n\033[1;34m▸ %s\033[0m\n' "$*"; }
 warn() { printf '\033[1;33m! %s\033[0m\n' "$*"; }
 
 # ─── 1. Prerequisites ─────────────────────────────────────────────────────────
-log "1/14  Installing prerequisites"
+log "1/15  Installing prerequisites"
 sudo apt update
 sudo apt install -y curl wget git stow rsync gpg ca-certificates apt-transport-https
 
 # ─── 2. Vendor signing keys ───────────────────────────────────────────────────
-log "2/14  Installing apt signing keys (Docker, Cloudflare, Chrome)"
+log "2/15  Installing apt signing keys (Docker, Cloudflare, Chrome)"
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo install -m 0755 -d /usr/share/keyrings
 
@@ -55,16 +56,16 @@ if ! dpkg -s google-chrome-stable >/dev/null 2>&1; then
 fi
 
 # ─── 3. Apt sources ───────────────────────────────────────────────────────────
-log "3/14  Restoring /etc/apt/sources.list.d/"
+log "3/15  Restoring /etc/apt/sources.list.d/"
 sudo rsync -a packages/apt-sources/ /etc/apt/sources.list.d/
 
 # ─── 4. APT packages ──────────────────────────────────────────────────────────
-log "4/14  apt update + install (apt-manual.txt — already-installed are no-ops)"
+log "4/15  apt update + install (apt-manual.txt — already-installed are no-ops)"
 sudo apt update
 xargs -a packages/apt-manual.txt sudo apt install -y || warn "Some apt packages failed (likely missing on this release) — continuing"
 
 # ─── 5. Flatpak ───────────────────────────────────────────────────────────────
-log "5/14  Flatpak setup + apps"
+log "5/15  Flatpak setup + apps"
 if ! command -v flatpak >/dev/null; then sudo apt install -y flatpak; fi
 flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo || true
 # packages/flatpak.txt is "appid<TAB>origin" per line
@@ -75,7 +76,7 @@ while IFS=$'\t' read -r appid origin; do
 done < packages/flatpak.txt
 
 # ─── 6. Oh-My-Zsh + plugins ───────────────────────────────────────────────────
-log "6/14  Oh-My-Zsh + plugins"
+log "6/15  Oh-My-Zsh + plugins"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
   RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || warn "Oh-My-Zsh install failed"
 fi
@@ -84,19 +85,19 @@ ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 [[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] || git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 
 # ─── 7. TPM (Tmux Plugin Manager) ─────────────────────────────────────────────
-log "7/14  Tmux Plugin Manager"
+log "7/15  Tmux Plugin Manager"
 TPM_DIR="$HOME/.config/tmux/plugins/tpm"
 mkdir -p "$(dirname "$TPM_DIR")"
 [[ -d "$TPM_DIR" ]] || git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
 
 # ─── 8. Starship ──────────────────────────────────────────────────────────────
-log "8/14  Starship prompt"
+log "8/15  Starship prompt"
 if ! command -v starship >/dev/null; then
   curl -fsSL https://starship.rs/install.sh | sh -s -- --yes || warn "starship install failed"
 fi
 
 # ─── 9. Runtimes: fnm/Node/npm + fvm/Flutter + Deno + Claude Code ─────────────
-log "9/14  Runtimes (fnm, fvm, deno, claude)"
+log "9/15  Runtimes (fnm, fvm, deno, claude)"
 
 # Make sure tool install dirs are on PATH BEFORE any guards check them
 # (otherwise re-runs reinstall everything because `command -v` doesn't see the binaries)
@@ -150,7 +151,7 @@ if ! command -v claude >/dev/null; then
 fi
 
 # ─── 10. Pre-stow cleanup: back up + remove conflicting targets ───────────────
-log "10/14 Pre-stow cleanup (back up any pre-existing target files)"
+log "10/15 Pre-stow cleanup (back up any pre-existing target files)"
 STOW_TARGETS=(
   "$HOME/.zshrc"
   "$HOME/.bashrc"
@@ -168,6 +169,9 @@ STOW_TARGETS=(
   "$HOME/.config/neofetch/config.conf"
   "$HOME/.config/starship.toml"
   "$HOME/.local/bin/start-work"
+  "$HOME/.local/bin/git-fetch-all"
+  "$HOME/.config/systemd/user/git-fetch.service"
+  "$HOME/.config/systemd/user/git-fetch.timer"
   "$HOME/.claude/CLAUDE.md"
   "$HOME/.claude/RTK.md"
   "$HOME/.claude/settings.json"
@@ -201,22 +205,38 @@ else
 fi
 
 # ─── 11. Stow configs into $HOME ──────────────────────────────────────────────
-log "11/14 Stowing configs"
+log "11/15 Stowing configs"
 "$DOTFILES/stow.sh"
 
-# ─── 12. Restore COSMIC config (merge, do not delete) ─────────────────────────
-log "12/14 Restoring ~/.config/cosmic/ from snapshot"
+# ─── 12. Enable systemd user timers ───────────────────────────────────────────
+log "12/15 Enabling systemd user timers"
+systemctl --user daemon-reload || warn "systemctl daemon-reload failed"
+# Make timers fire even when no graphical session is open (laptop closed, etc.)
+sudo loginctl enable-linger "$USER" 2>/dev/null || true
+USER_TIMERS=(
+  git-fetch.timer
+)
+for t in "${USER_TIMERS[@]}"; do
+  if [[ -f "$HOME/.config/systemd/user/$t" ]]; then
+    systemctl --user enable --now "$t" || warn "enable $t failed"
+  else
+    warn "missing unit: $t (did stow run?)"
+  fi
+done
+
+# ─── 13. Restore COSMIC config (merge, do not delete) ─────────────────────────
+log "13/15 Restoring ~/.config/cosmic/ from snapshot"
 mkdir -p "$HOME/.config/cosmic"
 rsync -a cosmic-config/ "$HOME/.config/cosmic/"
 
 # ─── 13. dconf snapshot ───────────────────────────────────────────────────────
-log "13/14 Loading dconf snapshot"
+log "14/15 Loading dconf snapshot"
 if [[ -s dconf/dconf.dump ]]; then
   dconf load / < dconf/dconf.dump || warn "dconf load failed (non-fatal)"
 fi
 
 # ─── 14. Default shell → zsh ──────────────────────────────────────────────────
-log "14/14 Setting default shell to zsh"
+log "15/15 Setting default shell to zsh"
 if [[ "$SHELL" != *zsh ]]; then
   ZSH_BIN="$(command -v zsh)"
   if grep -qx "$ZSH_BIN" /etc/shells; then

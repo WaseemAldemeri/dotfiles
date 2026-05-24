@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Background-fetch every git repo under $ROOTS so the shell prompt
+# (starship) shows accurate ahead/behind counts without manual fetches.
+# Skips repos with no remote. Runs fetches in parallel.
+set -u
+
+ROOTS=("$HOME/Work")
+
+fetch_one() {
+  repo=$1
+  # skip if no remotes configured
+  [ -n "$(git -C "$repo" remote)" ] || return 0
+  git -C "$repo" fetch --all --prune --quiet 2>/dev/null
+}
+export -f fetch_one
+
+for root in "${ROOTS[@]}"; do
+  [ -d "$root" ] || continue
+  find "$root" -type d -name .git -prune -print0 \
+    | xargs -0 -n1 dirname \
+    | xargs -n1 -P8 -I{} bash -c 'fetch_one "$@"' _ {}
+done

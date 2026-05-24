@@ -16,6 +16,7 @@ PACKAGES=(
   neofetch
   starship
   scripts
+  systemd
   claude
 )
 

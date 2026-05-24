@@ -50,7 +50,8 @@
     "notion@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "github@claude-plugins-official": true,
-    "ast-grep@ast-grep-marketplace": true
+    "ast-grep@ast-grep-marketplace": true,
+    "supabase@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "ast-grep-marketplace": {
@@ -60,9 +61,9 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
-  "voiceEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
